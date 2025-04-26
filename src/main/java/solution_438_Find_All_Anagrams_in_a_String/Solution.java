@@ -1,21 +1,32 @@
 package solution_438_Find_All_Anagrams_in_a_String;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Solution {
-    public static int lengthOfLongestSubstring(String s) {
-        HashSet<Character> set = new HashSet<>();
-        int maxLength = 0, left = 0;
+    public static List<Integer> findAnagrams(String s, String p) {
+        List<Integer> result = new ArrayList<>();
+        if (s.length() < p.length()) return result;
 
-        for (int right = 0; right < s.length(); right++) {
-            while (set.contains(s.charAt(right))) {
-                set.remove(s.charAt(left));
-                left++;
+        int[] freqP = new int[26], freqS = new int[26];
+
+        // Заполняем частотный массив p
+        for (char c : p.toCharArray()) freqP[c - 'a']++;
+
+        // Перебираем s скользящим окном
+        for (int i = 0; i < s.length(); i++) {
+            freqS[s.charAt(i) - 'a']++; // Добавляем текущий символ в окно
+
+            if (i >= p.length()) {
+                freqS[s.charAt(i - p.length()) - 'a']--; // Убираем старый символ
             }
-            set.add(s.charAt(right));
-            maxLength = Math.max(maxLength, right - left + 1);
+
+            if (Arrays.equals(freqP, freqS)) {
+                result.add(i - p.length() + 1); // Добавляем начальный индекс
+            }
         }
 
-        return maxLength;
+        return result;
     }
 }
